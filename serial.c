@@ -73,8 +73,7 @@ int rawserial_open(int max, int vid, int pid, int usage_page, int usage)
 
     usb_dev_handle *u;
     uint8_t buf[1024];
-    int i, n, len, ep_in, ep_out, count = 0, claimed;
-    uint32_t parsed_usage, parsed_usage_page;
+    int i, n, ep_in, ep_out, count = 0, claimed;
     serial_t *serial;
 
     if (first_serial) free_all_serial();
