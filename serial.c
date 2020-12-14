@@ -118,7 +118,7 @@ int rawserial_open(int max, int vid, int pid, int usage_page, int usage)
                 // 해당 Serial 인터페이스의 모든 엔드포인트(endpoint)를 확인하며
                 for (n = 0; n < desc->bNumEndpoints; n++, ep++) {
                     if (ep->bEndpointAddress & 0x80) {
-                        if (!ep_in) ep_in = ep->bEndpointAddress & 0x7F;
+                        if (!ep_in) ep_in = ep->bEndpointAddress;
                         printf("IN endpoint number: %d\n", ep_in);
                     } else {
                         if (!ep_out) ep_out = ep->bEndpointAddress;
@@ -148,25 +148,6 @@ int rawserial_open(int max, int vid, int pid, int usage_page, int usage)
                 if (usb_claim_interface(u, i) < 0) {
                     printf("unable claim interface %d\n", i);
                     continue;
-                }
-                
-                // USB descriptor 정보 읽기
-                len = usb_control_msg(u, 0x81, 6, 0x2200, i, (char *)buf, sizeof(buf), 250);
-                printf("descriptor, len=%d\n", len);
-                if (len < 2) {
-                    usb_release_interface(u, i);
-                    continue;
-                }
-
-                // 사전에 설정한 Usage Page 및 Usage ID와 일치하는지 확인
-                parsed_usage_page = buf[1] + (buf[2] << 8);
-                parsed_usage = buf[3] + (buf[4] << 8);
-                printf("parsed usage page = %d, parsed usage ID = %d\n", parsed_usage_page, parsed_usage);
-                if ((!parsed_usage_page) || (!parsed_usage) ||
-                    (usage_page > 0 && parsed_usage_page != usage_page) || 
-                    (usage > 0 && parsed_usage != usage)) {
-                        usb_release_interface(u, i);
-                        continue;
                 }
 
                 // Serial 객체 초기화
