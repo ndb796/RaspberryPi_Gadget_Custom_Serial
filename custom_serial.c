@@ -41,7 +41,8 @@ int main()
             for (i = 0; i < SIZE; i++) {
                 buf[i] = 'F';
             }
-            rawserial_send(0, buf, SIZE, 100);
+            // Device가 받을 때까지 기다리기
+            rawserial_send(0, buf, SIZE, 0);
         }
     }
 }
